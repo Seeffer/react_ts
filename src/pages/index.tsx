@@ -23,12 +23,6 @@ const theme = createMuiTheme({
   overrides: {
     MuiButton: { // Name of the component ⚛️ / style sheet
       root: { width: '200px', backgroundColor: '#90caf9' },
-      text: { // Name of the rule
-        fontFamily: 'Helvetica',
-        fontSize: '32',
-        fontStyle: 'italic',
-        fontWeight: 'bold'
-      },
     },
     MuiTableCell: {
       root: { paddingLeft: '10px', border: '1px', borderLeft: '1px solid rgba(224, 224, 224, 1)' },
@@ -50,10 +44,13 @@ const styles = (thm: Theme) =>
       overflowX: 'auto',
     },
     table: {
-      border: '1px solid rgba(224, 224, 224, 1)'
+      border: '1px solid rgba(224, 224, 224, 1)',
+      width: '80%', 
+      margin: 40,
+      padding: 'dense'
     },
     progress: {
-      margin: theme.spacing.unit * 2,
+      margin: thm.spacing.unit * 2,
     },
   });
 
@@ -85,6 +82,7 @@ class Index extends React.Component<WithStyles<typeof styles>, State> {
     this.handleError = this.handleError.bind(this);
     this.handleClick = this.handleClick.bind(this);
     this.handleChangePolicy = this.handleChangePolicy.bind(this);
+    this.handleChangeUrl = this.handleChangeUrl.bind(this);
   }
 
   testAxios(): any {
@@ -162,6 +160,10 @@ class Index extends React.Component<WithStyles<typeof styles>, State> {
     this.testAxios();
   }
   
+  handleChangeUrl = (event: React.ChangeEvent<HTMLInputElement>) => {
+    this.setState({ baseUrl: event.target.value });
+  };
+  
   handleChangePolicy = (event: React.ChangeEvent<HTMLInputElement>) => {
     this.setState({ policyNumber: event.target.value });
   };
@@ -174,6 +176,8 @@ class Index extends React.Component<WithStyles<typeof styles>, State> {
             label="URL" 
             defaultValue="http://localhost/PolicyAPI/api/PolicyRetrieve/GetPolicyInformation/" 
             style={{width: '75%', margin: 10}}
+            value={this.state.baseUrl}
+            onChange={this.handleChangeUrl}
           /><p/>
           <TextField 
             label="Policy Number" 
@@ -182,17 +186,26 @@ class Index extends React.Component<WithStyles<typeof styles>, State> {
             value={this.state.policyNumber}
             onChange={this.handleChangePolicy}
           /><p/>
-          <Button 
-            variant="outlined" 
-            style={{margin: 10}}
-            onClick={this.handleClick}
-          >
-            Call Service
-          </Button>
-          <div>
-          {this.state.inProgress && <CircularProgress className={this.props.classes.progress} />}
+          <div style={{position: 'relative', width: '220px'}}>
+            <Button 
+              variant="outlined" 
+              style={{margin: 10}}
+              disabled={this.state.inProgress}
+              onClick={this.handleClick}
+            >
+              Call Service
+            </Button>
+            {this.state.inProgress  
+                && 
+              <CircularProgress 
+                    style={{position: 'absolute', top: '50%', left: '50%',
+                            marginLeft: '-12px', marginTop: '-12px'}} 
+                    size={24} 
+                    className={this.props.classes.progress} 
+              />
+            } 
           </div>
-          <Table style={{width: '80%', margin: 40}} padding="dense" className={this.props.classes.table}>
+          <Table className={this.props.classes.table}>
             <TableHead>
               <TableRow>
                 <TableCell>Name</TableCell>
